@@ -7,29 +7,32 @@ namespace TomLabs.ProgEx.Snake.CLI
 	{
 		private static void Main(string[] args)
 		{
-			var s = new Snaker(20, 20, 10);
-			int pause = 500;
+			var s = new Snaker(20, 20, 5);
+			int pause = 400;
 
 			var key = ConsoleKey.End;
-			while (key != ConsoleKey.Escape && !s.GameOver)
+			do
 			{
-				if (Console.KeyAvailable)
+				s.Init();
+				while (key != ConsoleKey.Escape && !s.GameOver)
 				{
-					key = Console.ReadKey().Key;
-					switch (key)
+					if (Console.KeyAvailable)
 					{
-						case ConsoleKey.UpArrow: s.Steering = Core.Direction.Up; break;
-						case ConsoleKey.DownArrow: s.Steering = Core.Direction.Down; break;
-						case ConsoleKey.LeftArrow: s.Steering = Core.Direction.Left; break;
-						case ConsoleKey.RightArrow: s.Steering = Core.Direction.Right; break;
+						key = Console.ReadKey().Key;
+						switch (key)
+						{
+							case ConsoleKey.UpArrow: s.Steering = Core.Direction.Up; break;
+							case ConsoleKey.DownArrow: s.Steering = Core.Direction.Down; break;
+							case ConsoleKey.LeftArrow: s.Steering = Core.Direction.Left; break;
+							case ConsoleKey.RightArrow: s.Steering = Core.Direction.Right; break;
+						}
 					}
+
+					s.Cycle();
+					Thread.Sleep(pause - s.Score / 2);
 				}
+			} while (Console.ReadKey().Key == ConsoleKey.Enter);
 
-				s.Cycle();
-				Thread.Sleep(pause - s.Score / 2);
-			}
-
-			Console.WriteLine("Game over");
 			Console.ReadKey();
 		}
 	}

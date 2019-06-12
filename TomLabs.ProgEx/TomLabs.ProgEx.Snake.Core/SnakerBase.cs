@@ -25,7 +25,7 @@ namespace TomLabs.ProgEx.Snake.Core
 		public Point[] SnakeBody { get; protected set; }
 
 		public Direction Steering { get; set; }
-		public Direction Heading { get; set; }
+		public Direction Heading { get; private set; }
 
 		public bool GameOver { get; protected set; }
 
@@ -41,6 +41,9 @@ namespace TomLabs.ProgEx.Snake.Core
 			Init(snakeLength);
 		}
 
+		/// <summary>
+		/// Main game cycle handling snake moves
+		/// </summary>
 		public virtual void Cycle()
 		{
 			if (!GameOver)
@@ -71,6 +74,7 @@ namespace TomLabs.ProgEx.Snake.Core
 				if (head.X < 0 || head.Y < 0 || head.X > MAX_X || head.Y > MAX_Y || CheckSelfHarm())
 				{
 					GameOver = true;
+					OnGameOver();
 					return;
 				}
 				else if (head == Gem)
@@ -84,12 +88,16 @@ namespace TomLabs.ProgEx.Snake.Core
 			}
 		}
 
-		protected abstract void Render();
-
-		protected virtual void Init(int snakeLength = 3)
+		/// <summary>
+		/// Initializes all game variables
+		/// </summary>
+		/// <param name="snakeLength"></param>
+		public virtual void Init(int snakeLength = 3)
 		{
 			GameOver = false;
 			Score = 0;
+			Steering = Direction.Up;
+			Heading = Direction.Up;
 			NewGem();
 
 			SnakeBody = new Point[snakeLength];
@@ -99,6 +107,19 @@ namespace TomLabs.ProgEx.Snake.Core
 			}
 		}
 
+		/// <summary>
+		/// Method called on every <see cref="Cycle"/>. Implement custom rendering logic.
+		/// </summary>
+		protected abstract void Render();
+
+		/// <summary>
+		/// Called after game over occurs
+		/// </summary>
+		protected abstract void OnGameOver();
+
+		/// <summary>
+		/// Consumes gen - generating it at new position and incrementing <see cref="Score"/> by <see cref="ScoreIncrement"/>
+		/// </summary>
 		protected virtual void EatGem()
 		{
 			var last = SnakeBody.Last();
@@ -108,11 +129,18 @@ namespace TomLabs.ProgEx.Snake.Core
 			Score += ScoreIncrement;
 		}
 
+		/// <summary>
+		/// Generates new gem at ranom position
+		/// </summary>
 		protected virtual void NewGem()
 		{
 			Gem = new Point(rnd.Next(0, MAX_X), rnd.Next(0, MAX_Y));
 		}
 
+		/// <summary>
+		/// Check if snake did bite itself
+		/// </summary>
+		/// <returns></returns>
 		private bool CheckSelfHarm()
 		{
 			bool res = false;
@@ -127,6 +155,12 @@ namespace TomLabs.ProgEx.Snake.Core
 			return res;
 		}
 
+		/// <summary>
+		/// Move rest of body acording to snake's head
+		/// </summary>
+		/// <param name="array"></param>
+		/// <param name="head"></param>
+		/// <returns></returns>
 		private Point[] SnakeMove(Point[] array, Point head)
 		{
 			var newSnake = new Point[array.Length];
@@ -140,6 +174,12 @@ namespace TomLabs.ProgEx.Snake.Core
 			return newSnake;
 		}
 
+		/// <summary>
+		/// Add given item as last item inside given array
+		/// </summary>
+		/// <param name="array"></param>
+		/// <param name="item"></param>
+		/// <returns></returns>
 		private Point[] ArrayAddItem(Point[] array, Point item)
 		{
 			Array.Resize(ref array, array.Length + 1);
