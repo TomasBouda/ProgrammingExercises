@@ -98,13 +98,14 @@ namespace TomLabs.ProgEx.Snake.Core
 			Score = 0;
 			Steering = Direction.Up;
 			Heading = Direction.Up;
-			NewGem();
 
 			SnakeBody = new Point[snakeLength];
 			for (int i = 0; i < SnakeBody.Length; i++)
 			{
 				SnakeBody[i] = new Point(MAX_X / 2, i + MAX_Y / 2); //TODO
 			}
+
+			NewGem();
 		}
 
 		/// <summary>
@@ -135,6 +136,10 @@ namespace TomLabs.ProgEx.Snake.Core
 		protected virtual void NewGem()
 		{
 			Gem = new Point(rnd.Next(0, MAX_X), rnd.Next(0, MAX_Y));
+			while (SnakeBody.Contains(Gem))
+			{
+				Gem = new Point(rnd.Next(0, MAX_X), rnd.Next(0, MAX_Y));
+			}
 		}
 
 		/// <summary>
