@@ -1,4 +1,4 @@
-# ProgrammingExercises
+# Programming Exercises
 
 This is repo where I store some programming excersises :]
 
